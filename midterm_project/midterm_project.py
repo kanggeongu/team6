@@ -10,21 +10,22 @@ SECRET_KEY = 'development key'
 def home():
     return render_template('home.html')
 
-@app.route('/info', methods=['POST'])
+@app.route('/info', methods=['POST', 'GET'])
 def info():
     search=request.form['toSearch']
-    url = "https://namu.wiki/w/"+search
+    url = "https://google.com/search?q="+search
     res = requests.get(url)
     
     html=BeautifulSoup(res.content,'html.parser')
     
-    html_title=html.find('title')
-    html_body = html.find(attrs={'class':'wiki-paragraph'})
+    error=None
     
+    html_title=html.find(attrs={'class':'r'})
+    html_body = html.find(attrs={'class':'st'})
     title=html_title.text
     body=html_body.text
     
-    return redirect(url_for('home', parsed_title=title, parsed_body=body))
+    return render_template('home.html', parsed_title=title, parsed_body=body, error=error)
 
 if __name__ == '__main__':
     app.run()

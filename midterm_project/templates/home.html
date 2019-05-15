@@ -13,9 +13,13 @@
     <label for="name">Open Source Project Analysis Lists</label>
     </h2>
     <hr>
+    {% if error %}
+    {{error}}
+    {% else %}
     {% if parsed_title or parsed_body %}
     {{parsed_title}}
     <hr>
     {{parsed_body}}
+    {% endif %}
     {% endif %}
 </body>
