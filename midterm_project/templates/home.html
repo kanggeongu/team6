@@ -4,7 +4,7 @@
     <h2>
     <center><form action='/info' method='post'>
         <label for="name">Enter the URL</label>
-        <input name="name" type="text"/>
+        <input name="toSearch" type="text"/>
         <br/>
         <button type="submit">Process</button>
         <button type="submit">Report</button>
@@ -12,4 +12,10 @@
     <hr>
     <label for="name">Open Source Project Analysis Lists</label>
     </h2>
+    <hr>
+    {% if parsed_title or parsed_body %}
+    {{parsed_title}}
+    <hr>
+    {{parsed_body}}
+    {% endif %}
 </body>
