@@ -84,18 +84,20 @@ def info():
     token=parsed.split()
     tag=nltk.pos_tag(token)
     
-    for i, j in tag:
-        if not(i.isalnum()):
-            continue
-        if j == 'NN' or j == 'NNP' or j == 'NNS' or j == 'NNPS':
-            chk = query_db('select * from page where (page_url, data_noun) = (?,?)',[url, i],True)
-            if chk is None:
-                g.db.execute('insert into page (page_url, data_noun, data_count) values (?,?,?)',[url,i,1])
-                g.db.commit()
-            else:
-                n=chk['data_count']
-                g.db.execute('update page set data_count = ? where (page_url, data_noun) = (?,?)',[n+1, url, i])
-                g.db.commit()
+    temp=query_db('select * from result where result_url = ?',[url],one=True)
+    if temp is None:
+        for i, j in tag:
+            if not(i.isalnum()):
+                continue
+            if j == 'NN' or j == 'NNP' or j == 'NNS' or j == 'NNPS':
+                chk = query_db('select * from page where (page_url, data_noun) = (?,?)',[url, i],True)
+                if chk is None:
+                    g.db.execute('insert into page (page_url, data_noun, data_count) values (?,?,?)',[url,i,1])
+                    g.db.commit()
+                else:
+                    n=chk['data_count']
+                    g.db.execute('update page set data_count = ? where (page_url, data_noun) = (?,?)',[n+1, url, i])
+                    g.db.commit()
     
     temp = query_db('select * from page where page_url = ? order by data_count desc limit ?', [url, 20])
     stra = ''
