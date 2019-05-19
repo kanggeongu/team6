@@ -12,6 +12,20 @@ button[type="submit"]{
     color: black;
 }
 
+table {
+width: 100%;
+border: 1px solid black;
+text-align: center;
+}
+tr{
+border: 1px solid black;
+text-align: center;
+}
+td{
+border: 1px solid black;
+text-align: center;
+}
+
 div#first{
 width:20%;
 height:100px;

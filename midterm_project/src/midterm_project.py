@@ -20,7 +20,6 @@ app.config.from_object(__name__)
 app.config.from_envvar('GPSR_SETTINGS', silent=True)
 
 def connect_db():
-    setmax={"max":0}
     return sqlite3.connect(app.config['DATABASE'])
 
 def init_db():
@@ -36,7 +35,6 @@ def query_db(query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 def make_dictionary(num):
-    q = temp
     a = dict()
     for z in range(num):
         d = query_db('select * from page where page_url = ? order by data_count desc limit ?', [url,20])
@@ -73,10 +71,9 @@ def info():
     date=int(time.time())
     error=None
     if url == '':
-        return render_template('home.html',parsed=None, time=date,error='No page')
+        return render_template('home.html',parsed=query_db('select * from result'), time=date,error='No page')
     
     res = requests.get(url)
-    return res.raise_for_status()
     html=BeautifulSoup(res.content,'html.parser')
     
     if html is None:
@@ -116,6 +113,24 @@ def info():
     ret=query_db('select * from result')
     return render_template('home.html', parsed=ret, time=date, error=error)
 
+@app.route('/report', methods=['POST', 'GET'])
+def report():
+    return a;
+
+@app.route('/delete', methods=['POST', 'GET'])
+def delete():
+    g.db.execute('delete from result')
+    g.db.execute('delete from page')
+    g.db.commit()
+    return redirect(url_for('home'))
+
+@app.route('/delete_one/<id>', methods=['POST', 'GET'])
+def delete_one(id):
+    #temp = query_db('select * from result where result_id=?',[id],True)
+    #g.db.execute('delete from page where page_url=?',[temp['result_url']])
+    g.db.execute('delete from result where result_id=?',[id])
+    g.db.commit()
+    return render_template('home.html',parsed=query_db('select * from result'),error='deleted')
 
 app.jinja_env.filters['datetimeformat'] = format_datetime
 

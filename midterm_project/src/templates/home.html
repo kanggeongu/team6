@@ -9,7 +9,12 @@
         <input name="url" type="text" />
         <br />
         <button type="submit">Process</button>
+      </form>
+      <form action='/report' method='post'>
         <button type="submit">Report</button>
+      </form>
+      <form action='/delete' method='post'>
+        <button type="submit">Delete All</button>
       </form>
     </center>
     <hr>
@@ -17,20 +22,24 @@
   </h2>
   <hr>
   {% if error %}
-  {{error}}
-  {% else %}
-  <ul class=parse>
-    {% if parsed %}
-      {% for i in parsed %}
-        {% for key, data in i.items() %}
-          <h3>{{data}}</h3>
-          <hr>
-        {% endfor %}
-      {% endfor %}
-    <br>
-    </div>
-    <div id="day">&mdash; {{ time|datetimeformat }}</div>
-    {% endif %}
-  </ul>
+  <strong>{{error}}</strong>
   {% endif %}
+
+    {% if parsed %}
+    <table>
+      {% for i in parsed %}
+      <tr>
+        <td>
+          <h4>{{i['result_url']}}</h4>
+        </td>
+        <td>
+          <h4>{{i['result_ret']}}</h4>
+        </td>
+        <td>
+          <a href="{{ url_for('delete_one', id=i['result_id']) }}">delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
 </body>
