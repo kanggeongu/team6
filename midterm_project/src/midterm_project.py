@@ -70,11 +70,14 @@ def home():
 @app.route('/info', methods=['POST', 'GET'])
 def info():
     url = request.form['url']
-    res = requests.get(url)
-    html=BeautifulSoup(res.content,'html.parser')
-    
-    error=None
     date=int(time.time())
+    error=None
+    if url == '':
+        return render_template('home.html',parsed=None, time=date,error='No page')
+    
+    res = requests.get(url)
+    return res.raise_for_status()
+    html=BeautifulSoup(res.content,'html.parser')
     
     if html is None:
         error='No page'
