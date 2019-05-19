@@ -7,5 +7,6 @@ create table if not exists page(
 create table if not exists result(
   result_id integer primary key autoincrement,
   result_url string not null,
-  result_ret string not null
+  result_ret string not null,
+  result_cal stirng not null
 );

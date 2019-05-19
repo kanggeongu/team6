@@ -26,20 +26,12 @@
   {% endif %}
 
     {% if parsed %}
-    <table>
       {% for i in parsed %}
-      <tr>
-        <td>
-          <h4>{{i['result_url']}}</h4>
-        </td>
-        <td>
-          <h4>{{i['result_ret']}}</h4>
-        </td>
-        <td>
-          <a href="{{ url_for('delete_one', id=i['result_id']) }}">delete</a>
-        </td>
-      </tr>
+        <h2>{{i['result_url']}} <a href="{{ url_for('delete_one', id=i['result_id']) }}"><small>delete</small></a></h2>
+        
+        <hr>
+        <h4>{{i['result_ret']}}</h4>
+        <hr>
       {% endfor %}
-    </table>
     {% endif %}
 </body>

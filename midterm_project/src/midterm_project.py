@@ -94,6 +94,14 @@ def info():
                     g.db.execute('update page set data_count = ? where (page_url, data_noun) = (?,?)',[n+1, url, i])
                     g.db.commit()
     
+    temp=query_db('select * from page where page_url = ? order by data_count desc', [url])
+    strb= ''
+    for data in temp:
+        strb+=data['data_noun']
+        strb+=' '
+        strb+=str(data['data_count'])
+        strb+=' '
+    
     temp = query_db('select * from page where page_url = ? order by data_count desc limit ?', [url, 20])
     stra = ''
     for data in temp:
@@ -102,7 +110,7 @@ def info():
         stra+=str(data['data_count'])
         stra+=' '
     
-    g.db.execute('insert into result(result_url, result_ret) values(?,?)',[url, stra])
+    g.db.execute('insert into result(result_url, result_ret, result_cal) values(?,?,?)',[url, stra, strb])
     g.db.commit()
     
     ret=query_db('select * from result')
