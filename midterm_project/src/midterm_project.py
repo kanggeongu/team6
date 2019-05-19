@@ -5,7 +5,9 @@ from bs4 import BeautifulSoup
 import requests
 from contextlib import closing
 from nltk import regexp_tokenize
+from nltk.corpus import stopwords
 import nltk
+import re
 from sqlalchemy.orm import query
 
 DEBUG=True
@@ -69,15 +71,16 @@ def info():
         return render_template('home.html',parsed=query_db('select * from result'), error='No input')
     
     res = requests.get(url)
-    html=BeautifulSoup(res.content,'html.parser')
+    html=res.content
     
-    if html is None:
-        error='No page'
-        return render_template('home.html', parsed=query_db('select * from result'), error=error)
+    tokens=re.split('\W+',html.decode('utf-8'))
+    clean=BeautifulSoup(html,'html.parser').get_text()
     
-    parsed = html.text
-    token=parsed.split()
-    tag=nltk.pos_tag(token)
+    tokens=[tok for tok in clean.split()]
+    stop=set(stopwords.words('english'))
+    
+    clean_tokens= [tok for tok in tokens if len(tok.lower())>1 and (tok.lower() not in stop)]
+    tag=nltk.pos_tag(clean_tokens)
     
     temp=query_db('select * from result where result_url = ?',[url],one=True)
     if temp is None:

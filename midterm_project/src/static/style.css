@@ -1,51 +1,20 @@
 body {
-    background: white;
+    background: black;
     font-family: 'Trebuchet MS', sans-serif;
     font-size: 14px;
-    color: black;
+    color: gold;
 }
 
 button[type="submit"]{
-    background: gray;
+    background: gold;
     font-family: 'Trebuchet MS', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     color: black;
+    border:0;
+    outline:0;
 }
 
-table {
-width: 100%;
-border: 1px solid black;
-text-align: center;
-}
-tr{
-border: 1px solid black;
-text-align: center;
-}
-td{
-border: 1px solid black;
-text-align: center;
-}
-
-div#first{
-width:20%;
-height:100px;
-float:left;
-background: #E6E6E6;
-text-align:center;
-}
-
-div#con{
-width:60%;
-height:100px;
-float:left;
-background: #E6E6E6;
-text-align:left;
-}
-
-div#day{
-width:20%;
-height:100px;
-float:left;
-background: #E6E6E6;
-text-align:center;
+a{
+    color: silver;
+    text-decoration: none;
 }

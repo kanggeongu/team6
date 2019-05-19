@@ -4,21 +4,21 @@
 <body>
   <h2>
     <center>
-      <form action='/info' method='post'>
+      <form action='/info' method='post' style="display:inline">
         <label for="name">Enter the URL</label>
         <input name="url" type="text" />
         <br />
-        <button type="submit">Process</button>
+        <button type="submit" style="display:inline">Process</button>
       </form>
-      <form action='/report' method='post'>
-        <button type="submit">Report</button>
+      <form action='/report' method='post' style="display:inline">
+        <button type="submit" style="display:inline">Report</button>
       </form>
-      <form action='/delete' method='post'>
-        <button type="submit">Delete All</button>
+      <form action='/delete' method='post' style="display:inline">
+        <button type="submit" style="display:inline">Delete All</button>
       </form>
     </center>
     <hr>
-    <label for="name">Open Source Project Analysis Lists</label>
+    <label for="name"><h2>Open Source Project Analysis Lists</h2></label>
   </h2>
   <hr>
   {% if error %}
