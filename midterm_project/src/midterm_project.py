@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-import time
 from sqlite3 import dbapi2 as sqlite3
-from flask import Flask,render_template, request, url_for, redirect, g, flash
+from flask import Flask,render_template, request, url_for, redirect, g
 from bs4 import BeautifulSoup
 import requests
 from contextlib import closing
@@ -58,8 +56,6 @@ def before_request():
 def teardown_request(exception):
     g.db.close()
 
-def format_datetime(timestamp):
-    return datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d @ %H:%M')
 
 @app.route('/')
 def home():
@@ -68,17 +64,16 @@ def home():
 @app.route('/info', methods=['POST', 'GET'])
 def info():
     url = request.form['url']
-    date=int(time.time())
     error=None
     if url == '':
-        return render_template('home.html',parsed=query_db('select * from result'), time=date,error='No page')
+        return render_template('home.html',parsed=query_db('select * from result'), error='No input')
     
     res = requests.get(url)
     html=BeautifulSoup(res.content,'html.parser')
     
     if html is None:
         error='No page'
-        return render_template('home.html', parsed=None, time=date, error=error)
+        return render_template('home.html', parsed=query_db('select * from result'), error=error)
     
     parsed = html.text
     token=parsed.split()
@@ -111,7 +106,7 @@ def info():
     g.db.commit()
     
     ret=query_db('select * from result')
-    return render_template('home.html', parsed=ret, time=date, error=error)
+    return render_template('home.html', parsed=ret, error=error)
 
 @app.route('/report', methods=['POST', 'GET'])
 def report():
@@ -132,7 +127,6 @@ def delete_one(id):
     g.db.commit()
     return render_template('home.html',parsed=query_db('select * from result'),error='deleted')
 
-app.jinja_env.filters['datetimeformat'] = format_datetime
 
 if __name__ == '__main__':
     init_db()
