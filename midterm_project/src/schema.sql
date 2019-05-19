@@ -1,4 +1,5 @@
-create table if not exists parses (
-  toSearch string not null,
-  pub_date integer
+create table if not exists page(
+  page_url string not null,
+  data_noun string not null,
+  data_count integer
 );
