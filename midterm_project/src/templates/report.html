@@ -1,0 +1,24 @@
+<!doctype html>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}?after">
+
+<body>
+    <h1>report</h1>
+    <h2>common features model | matching word / entire word * 100</h2>
+<table>
+    <tbody>
+    {% for all,match,i in li %}  
+        {% if i%count==0 %}
+            <tr>
+        {% endif %}
+            {% if i//count < i%count %}
+                <td>{{match/all*100}}</td>
+            {% else %}
+                <td>     X     </td>
+            {% endif %}
+        {% if i%count==3 %}
+            </tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+</body>

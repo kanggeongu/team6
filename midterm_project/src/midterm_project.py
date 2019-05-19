@@ -9,6 +9,7 @@ from nltk.corpus import stopwords
 import nltk
 import re
 from sqlalchemy.orm import query
+from math import sqrt
 
 DEBUG=True
 DATABASE='midterm_project.db'
@@ -77,9 +78,17 @@ def info():
     clean=BeautifulSoup(html,'html.parser').get_text()
     
     tokens=[tok for tok in clean.split()]
+    clean=BeautifulSoup(html,'html.parser')
+
+    for script in clean(["script", "style"]):
+        script.extract()
+
+    text=clean.get_text()
+    
+    tokens=[tok for tok in text.split()]
     stop=set(stopwords.words('english'))
     
-    clean_tokens= [tok for tok in tokens if len(tok.lower())>1 and (tok.lower() not in stop)]
+    clean_tokens = [tok for tok in tokens if len(tok.lower())>1 and (tok.lower() not in stop)]
     tag=nltk.pos_tag(clean_tokens)
     
     temp=query_db('select * from result where result_url = ?',[url],one=True)
@@ -121,7 +130,35 @@ def info():
 
 @app.route('/report', methods=['POST', 'GET'])
 def report():
-    return a;
+    li=[]
+    newli=[]
+    temp=query_db('select * from result')
+    c=0
+    d=0
+    for i in temp:
+        for j in temp:
+            count=0
+            match=0
+            stI=i['result_cal'].split(' ')
+            stJ=j['result_cal'].split(' ')
+            lenI=len(stI)-1
+            lenJ=len(stJ)-1
+            
+            for idxI in range(0,lenI,2):
+                count += int(stI[idxI+1])
+                
+                for idxJ in range(0,lenJ,2):
+                    if stI[idxI] == stJ[idxJ]:
+                        match += int(stJ[idxJ+1])
+                        break
+                    
+            for idxJ in range(0,lenJ,2):
+                count += int(stJ[idxJ+1])
+               
+            li.append([count-match,match,d])
+            d+=1
+        c += 1
+    return render_template('report.html',li=li,count=c)
 
 @app.route('/delete', methods=['POST', 'GET'])
 def delete():
