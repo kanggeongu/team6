@@ -3,3 +3,8 @@ create table if not exists page(
   data_noun string not null,
   data_count integer
 );
+
+create table if not exists result(
+  result_url string not null,
+  result_ret string not null
+);

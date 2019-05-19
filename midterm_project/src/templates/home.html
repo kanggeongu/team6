@@ -21,9 +21,10 @@
   {% else %}
   <ul class=parse>
     {% if parsed %}
-      {% for i in parsed%}
+      {% for i in parsed %}
         {% for key, data in i.items() %}
-          <h3>{{key}},{{data}}</h3>
+          <h3>{{data}}</h3>
+          <hr>
         {% endfor %}
       {% endfor %}
     <br>

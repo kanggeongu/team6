@@ -8,7 +8,7 @@ import requests
 from contextlib import closing
 from nltk import regexp_tokenize
 import nltk
-
+from sqlalchemy.orm import query
 
 DEBUG=True
 DATABASE='midterm_project.db'
@@ -20,6 +20,7 @@ app.config.from_object(__name__)
 app.config.from_envvar('GPSR_SETTINGS', silent=True)
 
 def connect_db():
+    setmax={"max":0}
     return sqlite3.connect(app.config['DATABASE'])
 
 def init_db():
@@ -33,6 +34,23 @@ def query_db(query, args=(), one=False):
     rv = [dict((cur.description[idx][0], value)
                for idx, value in enumerate(row)) for row in cur.fetchall()]
     return (rv[0] if rv else None) if one else rv
+
+def make_dictionary(num):
+    q = temp
+    a = dict()
+    for z in range(num):
+        d = query_db('select * from page where page_url = ? order by data_count desc limit ?', [url,20])
+        for i in d:
+            if i['page_url'] in d:
+                d[i['page_url']].append(i['data_noun'])
+                d[i['page_url']].append(i['data_count'])
+            else:
+                lst = []
+                lst.append(i['data_noun'])
+                lst.append(i['data_count'])
+                d = {i['page_url']:lst}
+            
+    return a
 
 @app.before_request
 def before_request():
@@ -54,15 +72,21 @@ def info():
     url = request.form['url']
     res = requests.get(url)
     html=BeautifulSoup(res.content,'html.parser')
+    
     error=None
     date=int(time.time())
+    
     if html is None:
         error='No page'
         return render_template('home.html', parsed=None, time=date, error=error)
+    
     parsed = html.text
     token=parsed.split()
     tag=nltk.pos_tag(token)
+    
     for i, j in tag:
+        if not(i.isalnum()):
+            continue
         if j == 'NN' or j == 'NNP' or j == 'NNS' or j == 'NNPS':
             chk = query_db('select * from page where (page_url, data_noun) = (?,?)',[url, i],True)
             if chk is None:
@@ -71,8 +95,20 @@ def info():
             else:
                 n=chk['data_count']
                 g.db.execute('update page set data_count = ? where (page_url, data_noun) = (?,?)',[n+1, url, i])
+                g.db.commit()
     
-    ret=query_db('select data_noun, data_count from page order by data_count desc limit ?', [PER_PAGE])
+    temp = query_db('select * from page where page_url = ? order by data_count desc limit ?', [url, 20])
+    stra = ''
+    for data in temp:
+        stra+=data['data_noun']
+        stra+=' '
+        stra+=str(data['data_count'])
+        stra+=' '
+    
+    g.db.execute('insert into result(result_url, result_ret) values(?,?)',[url, stra])
+    g.db.commit()
+    
+    ret=query_db('select * from result')
     return render_template('home.html', parsed=ret, time=date, error=error)
 
 
