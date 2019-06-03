@@ -1,0 +1,28 @@
+<!doctype html>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<html>
+    <head>
+        <title>Login</title>
+    </head>
+    <body>
+        <div class="login">
+            <div class="box_text">
+                <h2>LOGIN</h2>
+                {% if error %}<div><strong>Error:</strong> {{ error }}</div>{% endif %}
+                <form action="" method=post>
+                    <table>
+                        <tr>
+                            <td>ID</td>
+                            <td><input type=text name=id size=15></td>
+                        </tr>
+                        <tr>
+                            <td>PW</td>
+                            <td><input type=password name=password size=15></td>
+                        </tr>
+                    </table>
+                    <div><input type=submit value="LOGIN"></div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
