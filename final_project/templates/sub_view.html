@@ -1,0 +1,18 @@
+<!doctype html>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<html>
+	<head>
+		<title>final project</title>
+	</head>
+	<body>
+		{% if not a %}
+			<h2>no sub</h2>
+		{% endif %}
+		{% for i in a %}
+			{{i.sub_title}}  <a href={{i.sub_link}}>link</a>
+			<br>
+			<img src={{i.sub_image}} width="83" height="90">
+			<hr>
+		{% endfor %}
+	</body>
+</html>

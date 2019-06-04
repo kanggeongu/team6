@@ -8,15 +8,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import requests
 import json
 
-DEBUG=True
-DATABASE="final_project.db"
-PER_PAGE=20
-
-SECRET_KEY = 'development key'
-
 app = Flask(__name__)
-app.config.from_object(__name__)
-app.config.from_envvar('GPSR_SETTINGS', silent=True)
+app.config.from_pyfile('config.py')
 
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
@@ -98,10 +91,6 @@ def logout():
 
 @app.route('/')
 def home():
-    user=None
-    if g.user:
-        user = g.user['user_id']
-        
     url="https://comic.naver.com/webtoon/weekday.nhn"
     res = requests.get(url)
     html = BeautifulSoup(res.content,'html.parser')
@@ -158,12 +147,26 @@ def home():
     dlength = len(daum_link)
     #dlength=134 nlength=263
     return render_template('home.html',
-                    user=user,wt_link=wt_link,wt_title=wt_title,wt_image=wt_image,nlength=nlength, dlength=dlength)
+                    user=g.user,wt_link=wt_link,wt_title=wt_title,wt_image=wt_image,nlength=nlength, dlength=dlength)
 
+@app.route('/subscribe', methods=['GET', 'POST'])
+def subscribe():
+    if not g.user:
+        return redirect(url_for('home'))
+    link=request.args.get('link')
+    image=request.args.get('image')
+    title=request.args.get('title')
+    user=g.user['user_id']
+    g.db.execute('insert into subscribe(sub_link, sub_image, sub_title, sub_user_id) values(?,?,?,?)',
+                 [link,image,title,user])
+    g.db.commit()
+    return redirect(url_for('home'))
+    
 
-@app.route('/subcribe/<num>')
-def subcribe():
-    return a
+@app.route('/sub_view')
+def sub_view():
+    temp = query_db('select * from subscribe')
+    return render_template('sub_view.html', a=temp)
 
 if __name__ == '__main__':
     init_db()

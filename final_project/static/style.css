@@ -1,13 +1,32 @@
-div.naviagtion{
+body{
+	font-family: "³ª´®¹Ù¸§°íµñ";
+	font-size:14pt;
+	color:black;
+}
+
+a{
+    color:#a1a1a1;
+    text-decoration: none;
+}
+
+h2.naver{
+	color:green;
+}
+
+h2.daum{
+	color:blue;
+}
+
+div.navigation{
 	width: 100%;
-	height: 15%;
+	height: auto;
 	float: left;
 	text-align: center;
 }
 
 div.content{
 	width: 50%;
-	height: auto%;
+	height: auto;
 	float: left;
 	text-align: center;
 }
