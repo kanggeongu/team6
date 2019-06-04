@@ -5,6 +5,7 @@ from flask import Flask, request, session, url_for, redirect, \
 from bs4 import BeautifulSoup
 from contextlib import closing
 from werkzeug.security import check_password_hash, generate_password_hash
+import requests
 
 DEBUG=True
 DATABASE="final_project.db"
@@ -99,8 +100,74 @@ def home():
     user=None
     if g.user:
         user = g.user['user_id']
-    return render_template('home.html',user=user)
+        
+    url="https://comic.naver.com/webtoon/weekday.nhn"
+    res = requests.get(url)
+    html = BeautifulSoup(res.content,'html.parser')
+    list_area = html.find(attrs={'class':'list_area daily_all'})
+    list_area_image=list_area.find_all('img')
+    list_area_title=list_area.find_all(attrs={'class':'title'})
+    naver_title=[]
+    naver_link=[]
+    naver_image=[]
+    for i in list_area_title:
+        title = i.get('title')
+        link = i.get('href')
+        if title is not None:
+            naver_title.append(title)
+        if link is not None:
+            naver_link.append(link)
+    for i in list_area_image:
+        title = i.get('title')
+        img = i.get('src')
+        if title is not None:
+            naver_image.append(img)
+    nlength = len(naver_title)
+    
+    durl=[]
+    durl.append("http://webtoon.daum.net/#day=mon&tab=day")
+    durl.append("http://webtoon.daum.net/#day=tue&tab=day")
+    durl.append("http://webtoon.daum.net/#day=wed&tab=day")
+    durl.append("http://webtoon.daum.net/#day=thu&tab=day")
+    durl.append("http://webtoon.daum.net/#day=fri&tab=day")
+    durl.append("http://webtoon.daum.net/#day=sat&tab=day")
+    durl.append("http://webtoon.daum.net/#day=sun&tab=day")
+    
+    daum_title=[]
+    daum_link=[]
+    daum_image=[]
+    for i in range(7):
+        print("!")
+        res = requests.get(durl[i])
+        html=BeautifulSoup(res.content,'html.parser')
+        daum_wt_list = html.find_all(attrs={'class':'link_wt'})
+        print(html)
+        for j in daum_wt_list:
+            link = j.get('href')
+            daum_link.append(link)
 
+        for j in daum_wt_list:
+            k = j.find('img')
+            image = k.get('src')
+            title = k.get('alt')
+            daum_image.append(image)
+            daum_title.append(title)
+            
+    print(daum_image)
+    print(daum_link)
+    print(daum_title)
+    print(len(daum_image))
+    print(len(daum_link))
+    print(len(daum_title))
+    
+    
+    return render_template('home.html',
+                    user=user,naver_image=naver_image, naver_link=naver_link, naver_title=naver_title, nlength=nlength)
+
+
+@app.route('/subcribe/<num>')
+def subcribe():
+    return a
 
 if __name__ == '__main__':
     init_db()

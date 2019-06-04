@@ -13,6 +13,16 @@
             <a href="{{url_for('login')}}">Login</a>
             <a href="{{url_for('register')}}">Register</a>
             {% endif %}
+            <br>
+            <h2>Naver</h2>
+            {% for i in range(nlength) %}
+            <a href="https://comic.naver.com{{naver_link[i]}}">link</a>
+            <br>
+            {{naver_title[i]}}
+            <br>
+            <img src="{{naver_image[i]}}" width="83" height="90">
+            <hr>
+            {% endfor %}
         </div>
 	</body>
 </html>
