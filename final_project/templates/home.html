@@ -22,8 +22,7 @@
             <h2 class='naver'>Naver</h2>
             <hr>
             {% for i in range(0,nlength) %}
-            	{{wt_title[i]}}
-	            <a href="{{wt_link[i]}}">link</a>
+	            <strong><a href="{{wt_link[i]}}">{{wt_title[i]}}</a></strong>
 	            <br>
 	            <img src="{{wt_image[i]}}" width="83" height="90">
 	            <br>
@@ -35,8 +34,19 @@
             <h2 class='daum'>Daum</h2>
             <hr>
             {% for i in range(nlength, dlength+nlength) %}
-            	{{wt_title[i]}}
-	            <a href="{{wt_link[i]}}">link</a>
+	            <strong><a href="{{wt_link[i]}}">{{wt_title[i]}}</a></strong>
+	            <br>
+	            <img src="{{wt_image[i]}}" width="83" height="90">
+	            <br>
+	           	<a href="{{url_for('subscribe',link=wt_link[i], image=wt_image[i], title=wt_title[i])}}">subscribe</a>
+	            <hr>
+            {% endfor %}
+        </div>
+        <div class=content>
+            <h2 class='comico'>Comico</h2>
+            <hr>
+            {% for i in range(nlength+dlength, dlength+nlength+clength) %}
+	            <strong><a href="{{wt_link[i]}}">{{wt_title[i]}}</a></strong>
 	            <br>
 	            <img src="{{wt_image[i]}}" width="83" height="90">
 	            <br>

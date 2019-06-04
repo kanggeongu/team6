@@ -141,13 +141,41 @@ def home():
             daum_link.append('http://webtoon.daum.net/webtoon/view/'+nickname)
             daum_image.append(imagelink)
             
-    wt_link=naver_link+daum_link
-    wt_title=naver_title+daum_title
-    wt_image=naver_image+daum_image
+    comico_title=[]
+    comico_link=[]
+    comico_image=[]
+    curl=[]
+    curl.append("https://comico.kr/ajax/weekTitleList?count=1000&weekNo=1&sortMode=heart&&_=1559646632132")
+    curl.append("https://comico.kr/ajax/weekTitleList?count=1000&weekNo=2&sortMode=heart&&_=1559646632132")
+    curl.append("https://comico.kr/ajax/weekTitleList?count=1000&weekNo=3&sortMode=heart&&_=1559646632132")
+    curl.append("https://comico.kr/ajax/weekTitleList?count=1000&weekNo=4&sortMode=heart&&_=1559646632132")
+    curl.append("https://comico.kr/ajax/weekTitleList?count=1000&weekNo=5&sortMode=heart&&_=1559646632132")
+    curl.append("https://comico.kr/ajax/weekTitleList?count=1000&weekNo=6&sortMode=heart&&_=1559646632132")
+    curl.append("https://comico.kr/ajax/weekTitleList?count=1000&weekNo=7&sortMode=heart&&_=1559646632132")
+    
+    for i in range(7):
+        res = requests.get(curl[i])
+        data= res.content
+        
+        j = json.loads(data)
+        k = j["data"]
+        k = k['list']
+        for l in k:
+            comico_title.append(l['name'])
+            p = l['thumbnailUrl']
+            iamgelink = p['titleVerticalUrl']
+            comico_link.append('https://comico.kr/titles/'+str(l['id']))
+            comico_image.append(imagelink)
+        
+            
+    wt_link=naver_link+daum_link+comico_link
+    wt_title=naver_title+daum_title+comico_title
+    wt_image=naver_image+daum_image+comico_image
     dlength = len(daum_link)
+    clength = len(comico_link)
     #dlength=134 nlength=263
     return render_template('home.html',
-                    user=g.user,wt_link=wt_link,wt_title=wt_title,wt_image=wt_image,nlength=nlength, dlength=dlength)
+                    user=g.user,wt_link=wt_link,wt_title=wt_title,wt_image=wt_image,nlength=nlength, dlength=dlength,clength=clength)
 
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
@@ -166,7 +194,17 @@ def subscribe():
 @app.route('/sub_view')
 def sub_view():
     temp = query_db('select * from subscribe')
-    return render_template('sub_view.html', a=temp)
+    li=[]
+    for i in temp:
+        if i['sub_user_id'] == g.user['user_id']:
+            li.append(i)
+    return render_template('sub_view.html', a=li)
+
+@app.route('/delete/<num>',methods=['GET'])
+def delete(num):
+    g.db.execute('delete from subscribe where sub_num = ?',[num])
+    g.db.commit()
+    return redirect(url_for('sub_view'))
 
 if __name__ == '__main__':
     init_db()

@@ -1,5 +1,5 @@
 body{
-	font-family: "³ª´®¹Ù¸§°íµñ";
+	font-family: "ï¿½ï¿½ï¿½ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½ï¿½";
 	font-size:14pt;
 	color:black;
 }
@@ -17,6 +17,10 @@ h2.daum{
 	color:blue;
 }
 
+h2.comico{
+	color:red;
+}
+
 div.navigation{
 	width: 100%;
 	height: auto;
@@ -25,7 +29,7 @@ div.navigation{
 }
 
 div.content{
-	width: 50%;
+	width: 33.333%;
 	height: auto;
 	float: left;
 	text-align: center;
