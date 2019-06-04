@@ -14,14 +14,25 @@
             <a href="{{url_for('register')}}">Register</a>
             {% endif %}
             <br>
+        </div>
+        <div class=content>
             <h2>Naver</h2>
-            {% for i in range(nlength) %}
-            <a href="https://comic.naver.com{{naver_link[i]}}">link</a>
-            <br>
-            {{naver_title[i]}}
-            <br>
-            <img src="{{naver_image[i]}}" width="83" height="90">
-            <hr>
+            {% for i in range(0,nlength) %}
+            	{{wt_title[i]}}
+	            <a href="{{wt_link[i]}}">link</a>
+	            <br>
+	            <img src="{{wt_image[i]}}" width="83" height="90">
+	            <hr>
+            {% endfor %}
+        </div>
+        <div class=content>
+            <h2>Daum</h2>
+            {% for i in range(nlength, dlength+nlength) %}
+            	{{wt_title[i]}}
+	            <a href="{{wt_link[i]}}">link</a>
+	            <br>
+	            <img src="{{wt_image[i]}}" width="83" height="90">
+	            <hr>
             {% endfor %}
         </div>
 	</body>

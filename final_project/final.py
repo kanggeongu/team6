@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from contextlib import closing
 from werkzeug.security import check_password_hash, generate_password_hash
 import requests
+import json
 
 DEBUG=True
 DATABASE="final_project.db"
@@ -107,6 +108,7 @@ def home():
     list_area = html.find(attrs={'class':'list_area daily_all'})
     list_area_image=list_area.find_all('img')
     list_area_title=list_area.find_all(attrs={'class':'title'})
+    
     naver_title=[]
     naver_link=[]
     naver_image=[]
@@ -116,7 +118,7 @@ def home():
         if title is not None:
             naver_title.append(title)
         if link is not None:
-            naver_link.append(link)
+            naver_link.append('https://comic.naver.com'+link)
     for i in list_area_image:
         title = i.get('title')
         img = i.get('src')
@@ -125,44 +127,38 @@ def home():
     nlength = len(naver_title)
     
     durl=[]
-    durl.append("http://webtoon.daum.net/#day=mon&tab=day")
-    durl.append("http://webtoon.daum.net/#day=tue&tab=day")
-    durl.append("http://webtoon.daum.net/#day=wed&tab=day")
-    durl.append("http://webtoon.daum.net/#day=thu&tab=day")
-    durl.append("http://webtoon.daum.net/#day=fri&tab=day")
-    durl.append("http://webtoon.daum.net/#day=sat&tab=day")
-    durl.append("http://webtoon.daum.net/#day=sun&tab=day")
+    durl.append("http://webtoon.daum.net/data/pc/webtoon/list_serialized/mon")
+    durl.append("http://webtoon.daum.net/data/pc/webtoon/list_serialized/tue")
+    durl.append("http://webtoon.daum.net/data/pc/webtoon/list_serialized/wed")
+    durl.append("http://webtoon.daum.net/data/pc/webtoon/list_serialized/thu")
+    durl.append("http://webtoon.daum.net/data/pc/webtoon/list_serialized/fri")
+    durl.append("http://webtoon.daum.net/data/pc/webtoon/list_serialized/sat")
+    durl.append("http://webtoon.daum.net/data/pc/webtoon/list_serialized/sun")
     
     daum_title=[]
     daum_link=[]
     daum_image=[]
     for i in range(7):
-        print("!")
         res = requests.get(durl[i])
-        html=BeautifulSoup(res.content,'html.parser')
-        daum_wt_list = html.find_all(attrs={'class':'link_wt'})
-        print(html)
-        for j in daum_wt_list:
-            link = j.get('href')
-            daum_link.append(link)
-
-        for j in daum_wt_list:
-            k = j.find('img')
-            image = k.get('src')
-            title = k.get('alt')
-            daum_image.append(image)
-            daum_title.append(title)
+        data= res.content
+        
+        j = json.loads(data)
+        k = j["data"]
+        for l in k:
+            daum_title.append(l['title'])
+            nickname = l['nickname']
+            p = l['thumbnailImage2']
+            imagelink = p['url']
+            daum_link.append('http://webtoon.daum.net/webtoon/view/'+nickname)
+            daum_image.append(imagelink)
             
-    print(daum_image)
-    print(daum_link)
-    print(daum_title)
-    print(len(daum_image))
-    print(len(daum_link))
-    print(len(daum_title))
-    
-    
+    wt_link=naver_link+daum_link
+    wt_title=naver_title+daum_title
+    wt_image=naver_image+daum_image
+    dlength = len(daum_link)
+    #dlength=134 nlength=263
     return render_template('home.html',
-                    user=user,naver_image=naver_image, naver_link=naver_link, naver_title=naver_title, nlength=nlength)
+                    user=user,wt_link=wt_link,wt_title=wt_title,wt_image=wt_image,nlength=nlength, dlength=dlength)
 
 
 @app.route('/subcribe/<num>')
